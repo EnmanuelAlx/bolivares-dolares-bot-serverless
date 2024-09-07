@@ -10,7 +10,7 @@ provider:
   runtime: python3.10
   profile: ckl
   environment:
-    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN, ''}
+    TELEGRAM_TOKEN: ${file(.env.json):TELEGRAM_TOKEN, ''}
 
 functions:
   webhook:
@@ -19,6 +19,9 @@ functions:
       - http:
           path: /
           method: POST
+          async: true
+    maximumEventAge: 7200
+    maximumRetryAttempts: 1
   set_webhook:
     handler: app.set_webhook
     events:

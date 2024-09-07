@@ -1,9 +1,8 @@
+import asyncio
 import json
 import logging
 
-import telegram
-
-from bot import init_bot
+from bot import TelegramBot
 from bot.responses import ERROR_RESPONSE, OK_RESPONSE
 
 # Logging is cool!
@@ -19,26 +18,14 @@ def webhook(event, context):
     Runs the Telegram webhook.
     """
 
-    bot = init_bot()
-    logger.info("Event: {}".format(event))
+    tg_bot = TelegramBot()
+    logger.info("Message received")
+    body = event.get("body")
+    response = asyncio.run(tg_bot.get_response(body))
+    logger.info("Message sent")
+    logger.info(response)
 
-    if event.get("httpMethod") == "POST" and event.get("body"):
-        logger.info("Message received")
-        update = telegram.Update.de_json(json.loads(event.get("body")), bot)
-        chat_id = update.message.chat.id
-        text = update.message.text
-
-        if text == "/start":
-            text = """Hello, human! I am an echo bot, built with Python and the Serverless Framework.
-            You can take a look at my source code here: https://github.com/jonatasbaldin/serverless-telegram-bot.
-            If you have any issues, please drop a tweet to my creator: https://twitter.com/jonatsbaldin. Happy botting!"""
-
-        bot.sendMessage(chat_id=chat_id, text=text)
-        logger.info("Message sent")
-
-        return OK_RESPONSE
-
-    return ERROR_RESPONSE
+    return OK_RESPONSE
 
 
 def set_webhook(event, context):
@@ -47,7 +34,7 @@ def set_webhook(event, context):
     """
 
     logger.info("Event: {}".format(event))
-    bot = init_bot()
+    bot = TelegramBot()
     url = "https://{}/{}/".format(
         event.get("headers").get("Host"),
         event.get("requestContext").get("stage"),
