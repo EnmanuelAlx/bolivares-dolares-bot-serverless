@@ -1,5 +1,4 @@
 import asyncio
-import json
 import logging
 
 from bot import TelegramBot
@@ -17,18 +16,28 @@ def webhook(event, context):
     """
     Runs the Telegram webhook.
     """
-
-    tg_bot = TelegramBot()
-    logger.info("Message received")
-    body = event.get("body")
-    response = asyncio.run(tg_bot.get_response(body))
-    logger.info("Message sent")
-    logger.info(response)
+    path = event.get("requestPath") or event.get("resource")
+    method = event.get("httpMethod") or event.get("method")
+    logger.info("El path es: {} y el method es {}".format(path, method))
+    if path == "/set_webhook" and method == "POST":
+        logger.info("Setting webhook")
+        return set_webhook(event)
+    elif method == "POST" and event.get("body"):
+        logger.info("Getting Message")
+        tg_bot = TelegramBot()
+        logger.info("Message received")
+        body = event.get("body")
+        response = asyncio.run(tg_bot.get_response(body))
+        logger.info("Message sent")
+        logger.info(response)
+    elif path == "/health-check" and method == "GET":
+        logger.info("Health check")
+        return OK_RESPONSE
 
     return OK_RESPONSE
 
 
-def set_webhook(event, context):
+def set_webhook(event):
     """
     Sets the Telegram bot webhook.
     """
@@ -37,15 +46,11 @@ def set_webhook(event, context):
     bot = TelegramBot()
     url = "https://{}/{}/".format(
         event.get("headers").get("Host"),
-        event.get("requestContext").get("stage"),
+        event.get("stage"),
     )
-    webhook = bot.set_webhook(url)
-
+    webhook = asyncio.run(bot.set_webhook(url))
+    logger.info("webhook: {}".format(webhook))
     if webhook:
         return OK_RESPONSE
 
     return ERROR_RESPONSE
-
-
-def health_check(self, _):
-    return OK_RESPONSE

@@ -2,6 +2,14 @@ from scrapper import BCVScrapper
 from scrapper.models import PriceCalculator
 
 
+async def default_command(_) -> str:
+    return "Command not found"
+
+
+async def start(arguments: list) -> str:
+    return "Hola, soy un bot que te ayuda a calcular el precio del dolar en Bs"
+
+
 async def bcv(arguments: list) -> str:
     scrapper = BCVScrapper()
     price = scrapper.get_dollar_price()

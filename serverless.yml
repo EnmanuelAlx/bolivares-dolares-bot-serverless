@@ -20,20 +20,18 @@ functions:
           path: /
           method: POST
           async: true
-    maximumEventAge: 7200
-    maximumRetryAttempts: 1
-  set_webhook:
-    handler: app.set_webhook
-    events:
-      - http:
-          path: /set_webhook
-          method: POST
-  health_check:
-    handler: app.health_check
-    events:
       - http:
           path: /health_check
           method: GET
+      - http:
+          path: /set_webhook
+          method: POST
+          async: true
+
+      
+    maximumEventAge: 7200
+    maximumRetryAttempts: 1
+
 
 plugins:
   - serverless-wsgi
