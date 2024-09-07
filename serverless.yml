@@ -1,0 +1,38 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: enmanuel
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: bolivares-dolares-bot
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: bolivares-dolares-bot
+
+provider:
+  name: aws
+  runtime: python3.10
+  profile: ckl
+  environment:
+    TELEGRAM_TOKEN: ${file(./serverless.env.yml):TELEGRAM_TOKEN, ''}
+
+functions:
+  webhook:
+    handler: app.webhook
+    events:
+      - http:
+          path: /
+          method: POST
+  set_webhook:
+    handler: app.set_webhook
+    events:
+      - http:
+          path: /set_webhook
+          method: POST
+  health_check:
+    handler: app.health_check
+    events:
+      - http:
+          path: /health_check
+          method: GET
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+  - serverless-offline
