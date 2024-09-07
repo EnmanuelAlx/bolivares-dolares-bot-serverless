@@ -10,6 +10,7 @@ if logger.handlers:
     for handler in logger.handlers:
         logger.removeHandler(handler)
 logging.basicConfig(level=logging.INFO)
+loop = asyncio.get_event_loop()
 
 
 def webhook(event, context):
@@ -27,7 +28,7 @@ def webhook(event, context):
         tg_bot = TelegramBot()
         logger.info("Message received")
         body = event.get("body")
-        response = asyncio.run(tg_bot.get_response(body))
+        response = loop.run_until_complete(tg_bot.get_response(body))
         logger.info("Message sent")
         logger.info(response)
     elif path == "/health-check" and method == "GET":
@@ -48,7 +49,7 @@ def set_webhook(event):
         event.get("headers").get("Host"),
         event.get("stage"),
     )
-    webhook = asyncio.run(bot.set_webhook(url))
+    webhook = loop.run_until_complete(bot.set_webhook(url))
     logger.info("webhook: {}".format(webhook))
     if webhook:
         return OK_RESPONSE

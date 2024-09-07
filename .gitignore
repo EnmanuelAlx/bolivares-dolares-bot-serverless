@@ -4,3 +4,4 @@ package-lock.json
 __pycache__/
 *env*
 serverless.env.yml
+.vscode

@@ -7,7 +7,7 @@ service: bolivares-dolares-bot
 
 provider:
   name: aws
-  runtime: python3.10
+  runtime: python3.12
   profile: ckl
   environment:
     TELEGRAM_TOKEN: ${file(.env.json):TELEGRAM_TOKEN, ''}
@@ -19,14 +19,12 @@ functions:
       - http:
           path: /
           method: POST
-          async: true
       - http:
           path: /health_check
           method: GET
       - http:
           path: /set_webhook
           method: POST
-          async: true
 
       
     maximumEventAge: 7200
