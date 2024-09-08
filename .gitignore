@@ -2,6 +2,6 @@ node_modules
 .serverless
 package-lock.json
 __pycache__/
-*env*
+.env*
 serverless.env.yml
 .vscode
