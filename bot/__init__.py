@@ -19,6 +19,7 @@ class TelegramBot:
         return {
             "/start": commands.start,
             "/bcv": commands.bcv,
+            "/help": commands.help,
         }
 
     def _get_commands(self, command: str) -> Callable:
@@ -30,7 +31,7 @@ class TelegramBot:
             message = update.message.text
             command, *arguments = message.split(" ")
             chat_id = update.message.chat.id
-            response = await self._get_commands(command)(arguments)
+            response = await self._get_commands(str.lower(command))(arguments)
             await self.bot.send_message(chat_id=chat_id, text=response)
         except Exception as e:
             response = str(e)

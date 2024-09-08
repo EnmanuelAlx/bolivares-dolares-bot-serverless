@@ -1,3 +1,4 @@
+from bot.constants import HELP_STRING, START_STRING
 from scrapper import BCVScrapper
 from scrapper.models import PriceCalculator
 
@@ -7,7 +8,11 @@ async def default_command(_) -> str:
 
 
 async def start(arguments: list) -> str:
-    return "Hola, soy un bot que te ayuda a calcular el precio del dolar en Bs"
+    return START_STRING
+
+
+async def help(_) -> str:
+    return HELP_STRING
 
 
 async def bcv(arguments: list) -> str:
