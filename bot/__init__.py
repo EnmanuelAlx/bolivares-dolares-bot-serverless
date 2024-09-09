@@ -20,6 +20,7 @@ class TelegramBot:
             "/start": commands.start,
             "/bcv": commands.bcv,
             "/help": commands.help,
+            "/manual": commands.manual,
         }
 
     def _get_commands(self, command: str) -> Callable:
@@ -36,6 +37,3 @@ class TelegramBot:
         except Exception as e:
             response = str(e)
         return response
-
-    async def set_webhook(self, url: str) -> bool:
-        return await self.bot.set_webhook(url)

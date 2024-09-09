@@ -10,5 +10,6 @@ Para ver los comandos disponibles usa /help
 HELP_STRING = """
 Los comandos disponibles son:
 - /bcv <monto1> <monto2> ... <montoN>
+- /manual precio dolar <monto2> ... <montoN>
 - /help
 """

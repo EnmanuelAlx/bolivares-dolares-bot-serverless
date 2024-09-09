@@ -23,9 +23,6 @@ functions:
       - http:
           path: /health_check
           method: GET
-      - http:
-          path: /set_webhook
-          method: POST
 
       
     maximumEventAge: 7200

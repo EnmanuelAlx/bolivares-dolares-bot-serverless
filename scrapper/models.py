@@ -7,7 +7,13 @@ from scrapper.exceptions import NotValidAmount
 
 @dataclass
 class PriceCalculator:
-    currency_price: Decimal
+    currency_price: Decimal | str
+
+    def __post_init__(self):
+        if type(self.currency_price) == str:
+            self.currency_price = self.validate_amounts([self.currency_price])[
+                0
+            ]
 
     def validate_amounts(self, amounts: list[str]):
         decimal_pattern = re.compile(r"^\d+(\.\d+)?$")
