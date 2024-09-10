@@ -1,5 +1,3 @@
-from typing import Callable
-
 import telegram
 
 from bot import commands
@@ -15,16 +13,17 @@ class TelegramBot:
         self.arguments = []
         self.commands = self.__set_commands()
 
-    def __set_commands(self) -> dict[str, Callable]:
-        return {
-            "/start": commands.start,
-            "/bcv": commands.bcv,
-            "/help": commands.help,
-            "/manual": commands.manual,
-        }
+    def __set_commands(self) -> dict[str, commands.AbstractCommand]:
+        _commands = [
+            commands.StartCommand(),
+            commands.BCVCommand(),
+            commands.HelpCommand(),
+            commands.ManualCommand(),
+        ]
+        return {command.command(): command for command in _commands}
 
-    def _get_commands(self, command: str) -> Callable:
-        return self.commands.get(command, commands.default_command)
+    def _get_commands(self, command: str) -> commands.AbstractCommand:
+        return self.commands.get(command, commands.DefaultCommand())
 
     async def get_response(self, json) -> str:
         try:
@@ -32,7 +31,9 @@ class TelegramBot:
             message = update.message.text
             command, *arguments = message.split(" ")
             chat_id = update.message.chat.id
-            response = await self._get_commands(str.lower(command))(arguments)
+            response = await self._get_commands(str.lower(command)).execute(
+                arguments
+            )
             await self.bot.send_message(chat_id=chat_id, text=response)
         except Exception as e:
             response = str(e)
