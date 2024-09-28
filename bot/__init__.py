@@ -1,6 +1,6 @@
 import telegram
 
-from bot import commands
+from bot.commands import AbstractCommand, DefaultCommand, command_list
 from bot.constants import TELEGRAM_TOKEN
 
 
@@ -13,17 +13,11 @@ class TelegramBot:
         self.arguments = []
         self.commands = self.__set_commands()
 
-    def __set_commands(self) -> dict[str, commands.AbstractCommand]:
-        _commands = [
-            commands.StartCommand(),
-            commands.BCVCommand(),
-            commands.HelpCommand(),
-            commands.ManualCommand(),
-        ]
-        return {command.command(): command for command in _commands}
+    def __set_commands(self) -> dict[str, AbstractCommand]:
+        return {command.command(): command for command in command_list}
 
-    def _get_commands(self, command: str) -> commands.AbstractCommand:
-        return self.commands.get(command, commands.DefaultCommand())
+    def _get_commands(self, command: str) -> AbstractCommand:
+        return self.commands.get(command, DefaultCommand())
 
     async def get_response(self, json) -> str:
         try:

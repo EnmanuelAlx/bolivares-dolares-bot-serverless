@@ -64,12 +64,36 @@ Ejemplo: {self.command()} 10 20 30
         scrapper = BCVScrapper()
         price = scrapper.get_dollar_price()
         calculator = PriceCalculator(currency_price=price)
-        rate_change = calculator.calculate_price(arguments)
+        rate_change = calculator.from_usd_to_bs(arguments)
         message = ""
         if len(arguments) > 1:
             sum_amounts = calculator.sum_amounts(arguments)
             message = f"La suma de tus montos es: {sum_amounts}$ \n"
-        message += f"El precio del dolar es: {price} \nAl cambio sería: {rate_change} Bs"
+        message += f"El precio del dolar es: {price} \nAl cambio sería: Bs.{rate_change}"
+        return message
+
+
+class BSCommand(AbstractCommand):
+
+    def command(self) -> str:
+        return "/bs"
+
+    def help_text(self) -> str:
+        return f"""
+{self.command()}: Comando para transformar el precio de bolivares a dolares a tasa del Banco Central de Venezuela .
+Ejemplo: {self.command()} 365
+"""
+
+    async def execute(self, arguments: list) -> str:
+        scrapper = BCVScrapper()
+        price = scrapper.get_dollar_price()
+        calculator = PriceCalculator(currency_price=price)
+        rate_change = calculator.from_bs_to_usd(arguments)
+        message = ""
+        if len(arguments) > 1:
+            sum_amounts = calculator.sum_amounts(arguments)
+            message = f"La suma de tus montos es: {sum_amounts}$ \n"
+        message += f"El precio del dolar es: {price} \nAl cambio sería: ${rate_change}"
         return message
 
 
@@ -87,7 +111,7 @@ Ejemplo: {self.command()} 40 10 15, donde el 40 es la tasa de cambio
     async def execute(self, arguments: list) -> str:
         rate, *amounts = arguments
         calculator = PriceCalculator(currency_price=rate)
-        rate_change = calculator.calculate_price(amounts)
+        rate_change = calculator.from_usd_to_bs(amounts)
         message = ""
         if len(amounts) > 1:
             sum_amounts = calculator.sum_amounts(amounts)
@@ -113,9 +137,18 @@ class HelpCommand(AbstractCommand):
         return "Los comandos disponibles son:"
 
     async def execute(self, _) -> str:
-        commands = [BCVCommand(), ManualCommand(), StartCommand()]
+        commands = [BCVCommand(), BSCommand(), ManualCommand(), StartCommand()]
         return f"""
 {self.help_text()}
 
 {self.format_commands(commands)}
 """
+
+
+command_list = [
+    StartCommand(),
+    BCVCommand(),
+    BSCommand(),
+    HelpCommand(),
+    ManualCommand(),
+]

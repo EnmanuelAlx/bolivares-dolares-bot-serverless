@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, Decimal
+from typing import Optional
 
 from scrapper.exceptions import NotValidAmount
 
@@ -28,6 +29,18 @@ class PriceCalculator:
     def sum_amounts(self, amounts: list):
         return sum(self.validate_amounts(amounts))
 
-    def calculate_price(self, amounts: list[str]):
+    def from_usd_to_bs(self, amounts: list[str]):
         amounts_parsed = self.validate_amounts(amounts)
         return sum(amounts_parsed) * self.currency_price
+
+    def from_bs_to_usd(self, amounts: list[str]):
+        amounts_parsed = self.validate_amounts(amounts)
+        return self.round(
+            Decimal(sum(amounts_parsed)) / self.currency_price  # type: ignore
+        )
+
+    def round(self, amount: Decimal, decimals: Optional[int] = None):
+        decimals = decimals or 3
+        return amount.quantize(
+            Decimal(f"1e-{decimals}"), rounding=ROUND_HALF_EVEN
+        )
