@@ -81,7 +81,7 @@ class BSCommand(AbstractCommand):
     def help_text(self) -> str:
         return f"""
 {self.command()}: Comando para transformar el precio de bolivares a dolares a tasa del Banco Central de Venezuela .
-Ejemplo: {self.command()} 365
+Ejemplo: {self.command()} 365 423 342
 """
 
     async def execute(self, arguments: list) -> str:
