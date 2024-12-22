@@ -30,5 +30,10 @@ class TelegramBot:
             )
             await self.bot.send_message(chat_id=chat_id, text=response)
         except Exception as e:
-            response = str(e)
+            response = f"*Error:* `{str(e)}`"
+            await self.bot.send_message(
+                chat_id=chat_id,
+                text=response,
+                parse_mode=telegram.constants.ParseMode.MARKDOWN,
+            )
         return response

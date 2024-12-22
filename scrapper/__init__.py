@@ -2,8 +2,8 @@ import logging
 from dataclasses import dataclass
 from decimal import ROUND_HALF_EVEN, Decimal
 
+import requests
 from bs4 import BeautifulSoup
-from httpcore import request
 
 from scrapper.constants import BCV_URL
 from scrapper.exceptions import CurrencyNotFoundException
@@ -19,10 +19,10 @@ class Scrapper:
         self.update_soup()
 
     def update_soup(self):
-        response = request("GET", self.url)
-        if response.status != 200:
+        response = requests.get(self.url, verify=False)
+        if response.status_code != 200:
             raise Exception(
-                f"HTTP request failed with status code {response.status}"
+                f"HTTP request failed with status code {response.status_code}"
             )
         self.soup = BeautifulSoup(response.content, "html.parser")
 

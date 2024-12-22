@@ -29,6 +29,10 @@ functions:
     maximumRetryAttempts: 1
 
 
+custom:
+  pythonRequirements:
+    dockerizePip: true
+
 plugins:
   - serverless-wsgi
   - serverless-python-requirements
